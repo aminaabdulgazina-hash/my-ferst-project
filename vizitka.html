@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Амина Незабудка — мобильная съёмка и монтаж</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f2f2f5;
+    --muted: #9a9aa6;
+    --c1: #ff5f9e;
+    --c2: #a46bff;
+    --c3: #4fc3ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+    overflow-x: hidden;
+  }
+
+  /* Фоновые цветные пятна */
+  .blob {
+    position: fixed;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.28;
+    z-index: 0;
+    animation: float 14s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .blob.b1 { background: var(--c1); top: -120px; left: -120px; }
+  .blob.b2 { background: var(--c3); bottom: -140px; right: -120px; animation-delay: -7s; }
+  @keyframes float {
+    to { transform: translate(60px, 40px) scale(1.15); }
+  }
+
+  /* Карточка */
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 32px 40px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease-out;
+    overflow: hidden;
+    animation: appear 0.9s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  }
+  /* Подсветка, следующая за курсором */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 0%),
+                rgba(164, 107, 255, 0.16), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Аватар с инициалами и вращающимся кольцом */
+  .avatar {
+    position: relative;
+    width: 112px; height: 112px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+  .avatar::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(var(--c1), var(--c2), var(--c3), var(--c1));
+    animation: spin 6s linear infinite;
+  }
+  .avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #121214;
+  }
+  .avatar svg { position: relative; z-index: 1; width: 48px; height: 48px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Имя с градиентным свечением */
+  h1 {
+    font-size: clamp(2.1rem, 8vw, 2.9rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(100deg, var(--c1), var(--c2), var(--c3), var(--c1));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(164, 107, 255, 0.55))
+            drop-shadow(0 0 40px rgba(255, 95, 158, 0.25));
+    animation: shimmer 6s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 300% 0; } }
+
+  .role {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 1.02rem;
+    letter-spacing: 0.02em;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .tag {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    color: #cfcfd8;
+  }
+
+  /* Соцсети */
+  .socials {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 32px 0 30px;
+  }
+  .social {
+    position: relative;
+    width: 54px; height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.25s cubic-bezier(.3,1.6,.5,1), border-color 0.25s, box-shadow 0.25s, color 0.25s;
+  }
+  .social svg { width: 24px; height: 24px; transition: transform 0.3s; }
+  .social:hover, .social:focus-visible {
+    transform: translateY(-6px);
+    border-color: transparent;
+    box-shadow: 0 10px 28px rgba(164, 107, 255, 0.45);
+    outline: none;
+  }
+  .social:hover svg { transform: scale(1.12) rotate(-6deg); }
+  .social.insta:hover, .social.insta:focus-visible {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  }
+  .social.copy:hover, .social.copy:focus-visible {
+    background: linear-gradient(135deg, var(--c2), var(--c3));
+  }
+  /* Подсказка */
+  .social[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translate(-50%, 4px);
+    white-space: nowrap;
+    font-size: 0.75rem;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: #1c1c20;
+    border: 1px solid var(--border);
+    color: var(--text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .social:hover::after { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Кнопка «Написать мне» */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 17px 24px;
+    border: none;
+    border-radius: 16px;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    background: linear-gradient(100deg, var(--c1), var(--c2), var(--c3), var(--c1));
+    background-size: 300% 100%;
+    animation: shimmer 5s linear infinite, pulse 2.6s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+  .btn svg { width: 20px; height: 20px; transition: transform 0.35s cubic-bezier(.3,1.6,.5,1); }
+  .btn:hover { transform: translateY(-2px) scale(1.02); }
+  .btn:hover svg { transform: translateX(5px) rotate(-12deg); }
+  .btn:active { transform: scale(0.97); }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(164, 107, 255, 0.55), 0 8px 30px rgba(255, 95, 158, 0.3); }
+    50%      { box-shadow: 0 0 0 12px rgba(164, 107, 255, 0), 0 8px 30px rgba(79, 195, 255, 0.35); }
+  }
+  /* Блик, пробегающий по кнопке */
+  .btn::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.45), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3.5s ease-in-out infinite;
+  }
+  @keyframes shine {
+    0%, 60% { left: -75%; }
+    100%    { left: 130%; }
+  }
+  /* Волна от клика */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: ripple 0.6s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+  .handle {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* Уведомление */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 30px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #1c1c20;
+    border: 1px solid var(--border);
+    font-size: 0.9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 10;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 480px) {
+    .card { padding: 40px 22px 32px; border-radius: 24px; }
+    .avatar { width: 96px; height: 96px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+
+  <main class="card" id="card">
+    <div class="avatar" aria-hidden="true">
+      <!-- Иконка камеры -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff5f9e"/>
+            <stop offset=".5" stop-color="#a46bff"/>
+            <stop offset="1" stop-color="#4fc3ff"/>
+          </linearGradient>
+        </defs>
+        <rect x="2" y="6" width="14" height="12" rx="3"/>
+        <path d="M16 10.5 22 7v10l-6-3.5"/>
+        <circle cx="9" cy="12" r="2.5"/>
+      </svg>
+    </div>
+
+    <h1>Амина<br>Незабудка</h1>
+    <p class="role">Мобильная съёмка и монтаж</p>
+
+    <div class="tags">
+      <span class="tag">📱 Reels</span>
+      <span class="tag">🎬 Монтаж</span>
+      <span class="tag">✨ Контент</span>
+    </div>
+
+    <nav class="socials" aria-label="Социальные сети">
+      <a class="social insta" href="https://instagram.com/amina_nezabudka" target="_blank" rel="noopener" data-tip="Instagram" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/>
+        </svg>
+      </a>
+      <button class="social copy" id="copyBtn" type="button" data-tip="Скопировать ник" aria-label="Скопировать ник">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="12" height="12" rx="2.5"/>
+          <path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>
+        </svg>
+      </button>
+    </nav>
+
+    <a class="btn" id="writeBtn" href="https://ig.me/m/amina_nezabudka" target="_blank" rel="noopener">
+      Написать мне
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2 11 13"/>
+        <path d="M22 2 15 22l-4-9-9-4 20-7z"/>
+      </svg>
+    </a>
+    <p class="handle">@amina_nezabudka</p>
+  </main>
+
+  <div class="toast" id="toast">Ник скопирован ✨</div>
+
+<script>
+  const card = document.getElementById('card');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // Подсветка и лёгкий 3D-наклон карточки за курсором (только на компьютере)
+  if (finePointer) {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+      const rx = ((y / r.height) - 0.5) * -6;
+      const ry = ((x / r.width) - 0.5) * 6;
+      card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  }
+
+  // Волна при нажатии на кнопку
+  document.getElementById('writeBtn').addEventListener('click', function (e) {
+    const r = this.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const s = document.createElement('span');
+    s.className = 'ripple';
+    s.style.width = s.style.height = size + 'px';
+    s.style.left = (e.clientX - r.left - size / 2) + 'px';
+    s.style.top = (e.clientY - r.top - size / 2) + 'px';
+    this.appendChild(s);
+    setTimeout(() => s.remove(), 600);
+  });
+
+  // Копирование ника
+  const toast = document.getElementById('toast');
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const nick = '@amina_nezabudka';
+    try {
+      await navigator.clipboard.writeText(nick);
+    } catch {
+      const t = document.createElement('textarea');
+      t.value = nick;
+      document.body.appendChild(t);
+      t.select();
+      document.execCommand('copy');
+      t.remove();
+    }
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  });
+</script>
+</body>
+</html>
